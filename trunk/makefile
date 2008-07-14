@@ -62,7 +62,7 @@ KRAWALL_FILES=
 #
 # Set a list of files you want to compile
 #
-OFILES += main.o hardware.o data.o sprites.o tiles.o user.o 
+OFILES += main.o hardware.o data.o sprites.o tiles.o user.o
 
 ##########################################################################################
 # Standard Makefile targets start here

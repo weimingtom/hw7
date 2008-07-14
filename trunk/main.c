@@ -6,25 +6,45 @@
 *
 *--------------------------------------------------------------------------*/
 //===================Includes
-
+#include "main.h"
+#include "hardware.h"
+#include "data.h"
+#include "user.h"
+#include "sprites.h"
 
 //===================Globals
-volatile u16 *scanlineCounter = (volatile u16 *) 0x4000006;
+volatile u16 *scanLineCounter = (volatile u16 *) 0x4000006;
 volatile u16 *buttons = (volatile u16 *) 0x4000130;
-         u16 *frontBuffer = (unsigned short*)0x6000000;
-         u16 *backBuffer = (unsigned short*)0x600A000;
-		 u16 *videoBuffer = (u16 *) 0x6000000;
-		 
-		 
+SWITCH_STATE sw_state[] = {0,0,0,0,0,0,0,0,0,0};
+u16 *videoBuffer = (u16 *) 0x6000000;
+u16 *FrontBuffer = (u16 *) 0x6000000;
+u16 *BackBuffer = (u16 *) 0x600A000;
+const u16 *spriteTiles = spritesTiles;
+const u16 *spritePalette = spritesPal;
+
+	
 //=====================Main
-#include "main.h"
+int backColor[] = {
+        0x001F,
+        31 << 10 | 31 << 5,
+        31 << 10 | 15 << 5,
+        31 << 10 | 31,
+        31 << 10 | 15};
+        
+int main(void) {
+    while(1) {
 
-int main() {
+    //initializeGBA(MODE_0 | OBJ_ENABLE );
+    REG_DISPCNT = BG2_ENABLE | MODE_0;
+	
+    //setPalette(RED_LOCATION, backColor[0]);
+    PALETTE_MEM[2] = backColor[0];
+    
 
-    while(0) {
-
+    fillScreen(RED);
+    waitForVBlank();
+    
+    
     }
-
  return 0;
- 
 }
