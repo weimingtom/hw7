@@ -30,6 +30,10 @@
 #define BUTTON_L        1<<8
 #define BUTTON_R        1<<9
 
+
+//#define KEY_DOWN_NOW(key)  (~(*BUTTONS) & key)
+
+
 //================DMA
 #define REG_DM3SAD *(volatile u32 *) 0x40000D4
 #define REG_DM3DAD *(volatile u32 *) 0x40000D8
