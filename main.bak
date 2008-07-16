@@ -11,11 +11,14 @@
 #include "data.h"
 #include "user.h"
 #include "sprites.h"
-#include "background.h"
-
+#include "background0.h"
+#include "background1.h"
+#include "background2.h"
 
 //===================Globals
 volatile u16 *scanLineCounter = (volatile u16 *) 0x4000006;
+screenblock *screenbase = (screenblock *)0x6000000;
+charblock *charbase = (charblock *)0x6000000;
 volatile u16 *buttons = (volatile u16 *) 0x4000130;
 SWITCH_STATE sw_state[] = {0,0,0,0,0,0,0,0,0,0};
 u16 *videoBuffer = (u16 *) 0x6000000;
@@ -23,76 +26,77 @@ u16 *FrontBuffer = (u16 *) 0x6000000;
 u16 *BackBuffer = (u16 *) 0x600A000;
 const u16 *spriteTiles = spritesTiles;
 const u16 *spritePalette = spritesPal;
-#define SPEED 2;
+
 
 	
 //=====================Main
-int backColor[] = {
-        0x001F,
-        31 << 10 | 31 << 5,
-        31 << 10 | 15 << 5,
-        31 << 10 | 31,
-        31 << 10 | 15};
-        
 int main(void) {
-    int i;
-    int hoff=0;
-    int voff=0;
-
-    //sets the BG0 vertical and horz offsets to 0
-    REG_BG2HOFS=0;
-    REG_BG2VOFS=0;
-
-    while(1) {
-        
-        
-    //MAP and background
-    //loads all the tiles and collision map
+    //Set Video Control
+    REG_DISPCNT = BG2_ENABLE | BG1_ENABLE | BG0_ENABLE | MODE_0;
     
-    for(i=0;i<backgroundTilesLen/2;i++)
-        charbase[0].tileimg[i]=backgroundTiles[i];
-
-    
-
-    //loads the map
-    for(i=0;i<1024;i++)
-        screenbase[31].tilemap[i]=backgroundMap[i];
-    
-    //loads the picture pallet
-    for(i=0;i<backgroundPalLen/2;i++)
-        PALETTE_MEM[i]=backgroundPal[i];
-
-   
     //tells the Background 0 control register
     //where the screen map is, the tiles, the color, and size0=256x256
     //background 1 is the collision map
-    REG_BG2CNT= SBB(29) | CBB(0) | COLOR256 | BG_SIZE0;
+    REG_BG0CNT=  CBB(0) | SBB(10) | COLOR16 | BG_SIZE0;
+    REG_BG1CNT=  CBB(2) | SBB(20) | COLOR16 | BG_SIZE2;
+    REG_BG2CNT=  CBB(3) | SBB(30) | COLOR16 | BG_SIZE2;
+    
+    //sets the BG's vertical and horz offsets to 0
+    REG_BG0HOFS=0;
+    REG_BG0VOFS=0;
+    REG_BG1HOFS=0;
+    REG_BG1VOFS=0;
+    REG_BG2HOFS=0;
+    REG_BG2VOFS=0;
 
-    //initializeGBA(MODE_0 | OBJ_ENABLE );
-    REG_DISPCNT = BG2_ENABLE | MODE_0;
-	
-    //setPalette(RED_LOCATION, backColor[0]);
-    //PALETTE_MEM[2] = backColor[0];
+    int i;
+    int speed=3;
+    int hoff=0;
+    int voff=0;
     
-    // these keys move the background around the screen
-        if(KEY_DOWN_NOW(BUTTON_LEFT))
-            hoff=hoff-SPEED;
-        if(KEY_DOWN_NOW(BUTTON_RIGHT))
-            hoff+=SPEED;
-        if(KEY_DOWN_NOW(BUTTON_UP))
-            voff=voff-SPEED;
-        if(KEY_DOWN_NOW(BUTTON_DOWN))
-            voff+=SPEED;
-    
-    waitForVBlank();
-    
+    while(1) {
 
-        REG_BG2HOFS=hoff;
-        REG_BG2VOFS=voff;
-    //fillScreen(RED);
+        //loads the picture pallet
+        //This is the same for all backgrounds
+        for(i=0;i<background0PalLen/2;i++)
+            PALETTE_MEM[i]=background0Pal[i];
 
-    
-    
+        //LOADS BACKGROUND 0
+        //loads all the tiles and collision map
+        for(i=0;i<background0TilesLen/2;i++)
+            charbase[3].tileimg[i]=background0Tiles[i];
+        //loads the map
+        for(i=0;i<background0MapLen/2;i++)
+            screenbase[30].tilemap[i]=background0Map[i];
+
+        //LOADS BACKGROUND 1
+        //loads all the tiles and collision map
+        for(i=0;i<background1TilesLen/2;i++)
+            charbase[2].tileimg[i]=background1Tiles[i];
+        //loads the map
+        for(i=0;i<background1MapLen/2;i++)
+            screenbase[20].tilemap[i]=background1Map[i];
+
+        //LOADS BACKGROUND 2
+        //loads all the tiles and collision map
+        for(i=0;i<background2TilesLen/2;i++)
+            charbase[0].tileimg[i]=background2Tiles[i];
+        //loads the map
+        for(i=0;i<background2MapLen/2;i++)
+            screenbase[10].tilemap[i]=background2Map[i];
+        
+        // these keys move the background around the screen
+        if(KEY_DOWN_NOW(BUTTON_LEFT))hoff-=speed;
+        if(KEY_DOWN_NOW(BUTTON_RIGHT))hoff+=speed;
+        if(KEY_DOWN_NOW(BUTTON_UP))voff-=speed;
+        if(KEY_DOWN_NOW(BUTTON_DOWN))voff+=speed;
+        
+        REG_BG0HOFS=hoff;
+        //REG_BG0VOFS=voff;
+        REG_BG1HOFS=hoff/20;
+        //REG_BG1VOFS=voff/20;
+        
+        waitForVBlank();
     }
  return 0;
 }

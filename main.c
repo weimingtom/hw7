@@ -37,9 +37,9 @@ int main(void) {
     //tells the Background 0 control register
     //where the screen map is, the tiles, the color, and size0=256x256
     //background 1 is the collision map
-    REG_BG0CNT=  CBB(0) | SBB(10) | COLOR16 | BG_SIZE0;
-    REG_BG1CNT=  CBB(2) | SBB(20) | COLOR16 | BG_SIZE2;
-    REG_BG2CNT=  CBB(3) | SBB(30) | COLOR16 | BG_SIZE2;
+    REG_BG0CNT=  CBB(0) | SBB(8) | COLOR16 | BG_SIZE0;
+    REG_BG1CNT=  CBB(2) | SBB(10) | COLOR16 | BG_SIZE2;
+    REG_BG2CNT=  CBB(3) | SBB(12) | COLOR16 | BG_SIZE2;
     
     //sets the BG's vertical and horz offsets to 0
     REG_BG0HOFS=0;
@@ -67,7 +67,7 @@ int main(void) {
             charbase[3].tileimg[i]=background0Tiles[i];
         //loads the map
         for(i=0;i<background0MapLen/2;i++)
-            screenbase[30].tilemap[i]=background0Map[i];
+            screenbase[12].tilemap[i]=background0Map[i];
 
         //LOADS BACKGROUND 1
         //loads all the tiles and collision map
@@ -75,7 +75,7 @@ int main(void) {
             charbase[2].tileimg[i]=background1Tiles[i];
         //loads the map
         for(i=0;i<background1MapLen/2;i++)
-            screenbase[20].tilemap[i]=background1Map[i];
+            screenbase[10].tilemap[i]=background1Map[i];
 
         //LOADS BACKGROUND 2
         //loads all the tiles and collision map
@@ -83,7 +83,7 @@ int main(void) {
             charbase[0].tileimg[i]=background2Tiles[i];
         //loads the map
         for(i=0;i<background2MapLen/2;i++)
-            screenbase[10].tilemap[i]=background2Map[i];
+            screenbase[8].tilemap[i]=background2Map[i];
         
         // these keys move the background around the screen
         if(KEY_DOWN_NOW(BUTTON_LEFT))hoff-=speed;
