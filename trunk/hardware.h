@@ -9,7 +9,10 @@
 #define REG_DISPCTL *(u16 *) 0X4000000
 #define PALETTE_MEM ((u16 *)0x5000000)
 #define OFFSET(X, Y) ((Y)*240 + (X))
+#define BG0_ENABLE 1 << 8
+#define BG1_ENABLE 1 << 9
 #define BG2_ENABLE 1 << 10
+#define BG3_ENABLE 1 << 11
 #define BACKBUFFER 0x10
 #define MODE_0 0
 #define MODE_1 1
@@ -112,6 +115,20 @@ typedef struct {
 #define BG_SIZE(num) (num & 3) << 14
 #define SBB(num) (num & 31) << 8
 #define CBB(num) (num & 3) << 2
+#define COLOR16  0 << 7
+#define COLOR256 1 << 7
+#define BG_SIZE0 0<<14      // 32 x 32 tiles
+#define BG_SIZE1 1<<14      // 64 x 32
+#define BG_SIZE2 2<<14      // 32 x 64
+#define BG_SIZE3 3<<14      // 64 x 64
+
+typedef struct {
+    u16 tileimg[8192];
+} charblock;
+
+typedef struct {
+    u16 tilemap[1024];
+} screenblock;
 
 //=================Prototypes
 void pause();

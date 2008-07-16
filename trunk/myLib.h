@@ -19,13 +19,6 @@ typedef signed long s32;
 typedef unsigned char bool;
 typedef u16 COLOR;
 
-typedef struct {
-    u16 tileimg[8192];
-} charblock;
-
-typedef struct {
-    u16 tilemap[1024];
-} screenblock;
 
 //======================Logic
 #define FALSE 0
@@ -41,15 +34,6 @@ extern u16 *FrontBuffer;
 extern u16 *BackBuffer;
 extern const u16 *spritePalette;
 extern const u16 *spriteTiles;
-extern screenblock *screenbase;
-extern charblock *charbase;
-
-#define COLOR256 1 << 7
-#define BG_SIZE0 0<<14      // 32 x 32 tiles
-#define BG_SIZE1 1<<14      // 64 x 32
-#define BG_SIZE2 2<<14      // 32 x 64
-#define BG_SIZE3 3<<14      // 64 x 64
-
 
 
 //=================Common Colors
