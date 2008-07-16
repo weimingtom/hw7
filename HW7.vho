@@ -3,7 +3,6 @@ main.c
 hardware.c
 data.c
 sprites.c
-tiles.c
-user.c
-background.c
-myLib.c
+background0.c
+background1.c
+background2.c
