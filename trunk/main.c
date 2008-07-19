@@ -43,7 +43,7 @@ int main(void) {
     
     //sets the BG's vertical and horz offsets to 0
     REG_BG0HOFS=0;
-    REG_BG0VOFS=0;
+    REG_BG0VOFS=20;
     REG_BG1HOFS=0;
     REG_BG1VOFS=0;
     REG_BG2HOFS=0;
@@ -86,8 +86,8 @@ int main(void) {
             screenbase[8].tilemap[i]=background2Map[i];
         
         // these keys move the background around the screen
-        if(KEY_DOWN_NOW(BUTTON_LEFT))hoff-=speed;
         if(KEY_DOWN_NOW(BUTTON_RIGHT))hoff+=speed;
+        if(KEY_DOWN_NOW(BUTTON_LEFT))hoff-=speed;
         if(KEY_DOWN_NOW(BUTTON_UP))voff-=speed;
         if(KEY_DOWN_NOW(BUTTON_DOWN))voff+=speed;
         
