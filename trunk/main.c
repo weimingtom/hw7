@@ -9,11 +9,18 @@
 #include "myLib.h"
 #include "hardware.h"
 #include "data.h"
-#include "user.h"
-#include "sprites.h"
 #include "background0.h"
 #include "background1.h"
 #include "background2.h"
+#include "characterSprites.h"
+
+#define SPRITEOFFSET(r,c) (r)*512+(32)       //used to index the sprite array
+#define NUMSPRITES 6                         //total number of sprites
+#define WALKINGROW (11*8)                    //the height at which the person walks
+#define JUMPHT 20                            //how high he jumps
+#define STANDING (0,0)                       //the spriteoffset for standing
+
+
 
 //===================Globals
 volatile u16 *scanLineCounter = (volatile u16 *) 0x4000006;
@@ -24,15 +31,14 @@ SWITCH_STATE sw_state[] = {0,0,0,0,0,0,0,0,0,0};
 u16 *videoBuffer = (u16 *) 0x6000000;
 u16 *FrontBuffer = (u16 *) 0x6000000;
 u16 *BackBuffer = (u16 *) 0x600A000;
-const u16 *spriteTiles = spritesTiles;
-const u16 *spritePalette = spritesPal;
+const u16 *spriteTiles = characterSpritesTiles;
 
 
 	
 //=====================Main
 int main(void) {
     //Set Video Control
-    REG_DISPCNT = BG2_ENABLE | BG1_ENABLE | BG0_ENABLE | MODE_0;
+    REG_DISPCNT = BG2_ENABLE | BG1_ENABLE | BG0_ENABLE | MODE_0 | OBJ_ENABLE;
     
     //tells the Background 0 control register
     //where the screen map is, the tiles, the color, and size0=256x256
@@ -54,13 +60,58 @@ int main(void) {
     int hoff=0;
     int voff=0;
     
+     //loads the picture pallet
+     //This is the same for all backgrounds
+     for(i=0;i<background0PalLen/2;i++)
+        PALETTE_MEM[i]=background0Pal[i];
+    
+    //===========================================Sprites
+    ObjAttr shadowOAM[128];
+
+    //defining sprites with room for more
+    Sprite spriteArray[NUMSPRITES]={
+        {WALKINGROW, 16, SPRITEOFFSET16(0,0), ATTR0_TALL, ATTR1_SIZE64, 32, 64, TRUE}
+        }
+        
+typedef struct {
+    int printRow;
+    int printCol;
+    int arrayLocation;
+    int shape;
+    int size;
+    int height;
+    int width;
+    int active;
+} Sprite;
+
+    //Loads sprite tiles
+    for(i=0; i<characterSpritesTilesLen/2; i++)
+        charbase[4].tileimg[i] = characterSpritesTiles[i];
+
+    //set attributes of the sprite in the duplicate mem
+    for(i=0; i<NUMSPRITES; i++)
+    {
+        shadowOAM[i].attr0 = spriteArray[i].row | ATTR0_4BPP | spriteArray[i].shape;
+        shadowOAM[i].attr1 = spriteArray[i].col | spriteArray[i].size;
+        shadowOAM[i].attr2 = spriteArray[i].start | ATTR2_PALETTE_BANK(0);
+    }
+
+    //hides all sprites except for main guy
+    for(i=0; i<128; i++)
+    {
+        if(!spriteArray[i].active)
+            shadowOAM[i].attr0 = ATTR0_HIDE;
+    }
+
+    waitForVblank();
+
+    // Copy shadow into real
+    for(i=0; i<128; i++)
+    {
+        SPRITEMEM[i] = shadowOAM[i];
+    }
+    
     while(1) {
-
-        //loads the picture pallet
-        //This is the same for all backgrounds
-        for(i=0;i<background0PalLen/2;i++)
-            PALETTE_MEM[i]=background0Pal[i];
-
         //LOADS BACKGROUND 0
         //loads all the tiles and collision map
         for(i=0;i<background0TilesLen/2;i++)

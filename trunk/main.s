@@ -76,13 +76,7 @@ BackBuffer:
 	.type	spriteTiles, %object
 	.size	spriteTiles, 4
 spriteTiles:
-	.word	spritesTiles
-	.global	spritePalette
-	.align	2
-	.type	spritePalette, %object
-	.size	spritePalette, 4
-spritePalette:
-	.word	spritesPal
+	.word	characterSpritesTiles
 	.text
 	.align	2
 	.global	main
@@ -97,19 +91,20 @@ main:
 	mov	r2, #67108864
 	sub	fp, ip, #4
 	sub	r3, r3, #247
+	mov	r0, #2048	@ movhi
 	sub	sp, sp, #4
 	mvn	r1, #29440
-	mov	r0, #2048	@ movhi
 	mov	lr, #0	@ movhi
 	strh	r0, [r2, #8]	@ movhi 
 	sub	r1, r1, #243
 	strh	r3, [r2, #10]	@ movhi 
+	mov	r0, #20	@ movhi
 	mov	r3, #1792	@ movhi
 	strh	r1, [r2, #12]	@ movhi 
 	ldr	r9, .L59
 	strh	lr, [r2, #16]	@ movhi 
 	ldr	sl, .L59+4
-	strh	lr, [r2, #18]	@ movhi 
+	strh	r0, [r2, #18]	@ movhi 
 	ldr	r7, .L59+8
 	strh	lr, [r2, #20]	@ movhi 
 	ldr	r8, .L59+12
@@ -131,8 +126,8 @@ main:
 	cmp	r1, #255	@  i
 	strh	r2, [r3, #0]	@ movhi 
 	ble	.L9
-	ldr	r0, .L59+28
-	ldr	r3, [r0, #0]	@  charbase
+	ldr	r2, .L59+28
+	ldr	r3, [r2, #0]	@  charbase
 	mov	r0, #604
 	add	r2, r3, #49152
 	mov	r1, #0	@  i
@@ -144,8 +139,8 @@ main:
 	cmp	r1, r0	@  i
 	strh	r3, [r2], #2	@ movhi 	@  <variable>.tileimg
 	ble	.L14
-	ldr	r2, .L59+32
-	ldr	r3, [r2, #0]	@  screenbase
+	ldr	lr, .L59+32
+	ldr	r3, [lr, #0]	@  screenbase
 	mov	r0, #1020
 	add	r2, r3, #24576
 	mov	r1, #0	@  i
@@ -157,8 +152,8 @@ main:
 	cmp	r1, r0	@  i
 	strh	r3, [r2], #2	@ movhi 	@  <variable>.tilemap
 	ble	.L19
-	ldr	lr, .L59+28
-	ldr	r3, [lr, #0]	@  charbase
+	ldr	r0, .L59+28
+	ldr	r3, [r0, #0]	@  charbase
 	mov	r0, #876
 	add	r2, r3, #32768
 	mov	r1, #0	@  i
@@ -170,8 +165,8 @@ main:
 	cmp	r1, r0	@  i
 	strh	r3, [r2], #2	@ movhi 	@  <variable>.tileimg
 	ble	.L24
-	ldr	r0, .L59+32
-	ldr	r3, [r0, #0]	@  screenbase
+	ldr	r2, .L59+32
+	ldr	r3, [r2, #0]	@  screenbase
 	mov	r0, #1020
 	add	r2, r3, #20480
 	mov	r1, #0	@  i
@@ -212,13 +207,13 @@ main:
 	ldr	r0, [r2, #0]	@  buttons
 	ldrh	r3, [r0, #0]
 	mvn	r3, r3
-	tst	r3, #32
+	tst	r3, #16
 	ldrh	r3, [r0, #0]
 	mvn	r3, r3
-	subne	ip, ip, #3	@  hoff,  hoff
-	tst	r3, #16
-	ldr	r3, .L59+40
 	addne	ip, ip, #3	@  hoff,  hoff
+	tst	r3, #32
+	ldr	r3, .L59+40
+	subne	ip, ip, #3	@  hoff,  hoff
 	smull	lr, r1, r3, ip	@  hoff
 	mov	r2, ip, asr #31	@  hoff
 	rsb	r2, r2, r1, asr #3

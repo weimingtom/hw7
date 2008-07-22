@@ -74,9 +74,9 @@ do {                                                     \
 #define ATTR1_NOFLIP (0<<12)
 #define ATTR2_PALETTE_BANK(pbn) ((pbn)<<12)
         /*----------------------------------------------------------
-         *          size           8       16       32      64
-         *                        00       01       02      03
-         *         shape
+         *
+         *          Size          00       01       02      03
+         *   attr0 shape
          *        Square  00     8x8    16x16    32x32   64x64
          *          Wide  01    16x8     32x8    32x16   64x32
          *          Tall  02    8x16     8x32    16x32   32x64
@@ -88,7 +88,6 @@ do {                                                     \
 #define OBJ_ENABLE 0x1000       // To enable sprites in REG_DISPCNT
 #define MODE1D (1<<6)           //Sprite mode is 1-D
 #define TOTALSPRITES 128
-
 
 typedef struct {
     int row;
@@ -103,7 +102,6 @@ typedef struct {
     int active;
     int flip;
 } Sprite;
-
 
 
 typedef struct {
